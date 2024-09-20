@@ -57,7 +57,10 @@ function createWebviewPanel(): vscode.WebviewPanel {
 		'devcross',
 		'Devcross',
 		vscode.ViewColumn.One,
-		{ enableScripts: true }
+		{
+			enableScripts: true,
+			retainContextWhenHidden: true
+		}
 	);
 }
 

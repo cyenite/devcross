@@ -8,12 +8,51 @@
   "engines": {
     "vscode": "^1.80.0"
   },
+  "keywords": [
+    "crossword",
+    "game",
+    "vscode"
+  ],
+  "pricing": "Free",
   "categories": [
     "Other"
   ],
   "activationEvents": [],
   "browser": "./dist/web/extension.js",
+  "repository": {
+    "url": "https://github.com/cyenite/devcross",
+    "type": "github"
+  },
+  "funding": [
+    {
+      "type": "buymeacoffee",
+      "url": "https://buymeacoffee.com/cyenite"
+    }
+  ],
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "icon": "media/icon.png",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devcrossSidebar",
+          "title": "Devcross",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "devcrossSidebar": [
+        {
+          "id": "devcrossView",
+          "name": "Crossword Puzzle",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "devcross.start",

@@ -3,6 +3,8 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('devcross.start', () => handleStartCommand(context));
 	context.subscriptions.push(disposable);
+
+	vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
 }
 
 /**
@@ -62,6 +64,30 @@ function createWebviewPanel(): vscode.WebviewPanel {
 			retainContextWhenHidden: true
 		}
 	);
+}
+
+/**
+ * Provider for the sidebar webview.
+ */
+class CrosswordViewProvider implements vscode.WebviewViewProvider {
+	constructor(private readonly context: vscode.ExtensionContext) { }
+
+	async resolveWebviewView(webviewView: vscode.WebviewView) {
+		webviewView.webview.options = {
+			enableScripts: true,
+			localResourceRoots: [this.context.extensionUri]
+		};
+
+		const panel = createWebviewPanel();
+
+		let apiKey = await getApiKey(this.context);
+
+		if (!apiKey) {
+			return;
+		}
+
+		webviewView.webview.html = generateWebviewContent(panel, this.context, apiKey);
+	}
 }
 
 /**

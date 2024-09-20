@@ -76,7 +76,7 @@ function generateWebviewContent(panel: vscode.WebviewPanel, context: vscode.Exte
 	const crosswordScriptUri = getUri('jquery.crossword.js');
 	const customScriptUri = getUri('script.js');
 	const styleUri = getUri('style.css');
-	const jqueryUri = getUri('jquery-3.7.1.min.js');
+	const jqueryUri = getUri('jquery-1.6.2.min.js');
 	const loaderUri = getUri('loading.gif');
 
 	return `

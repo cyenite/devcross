@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-export async function activate(context: vscode.ExtensionContext) {
-	const disposable = await vscode.commands.registerCommand('devcross.start', () => handleStartCommand(context));
+export function activate(context: vscode.ExtensionContext) {
+	const disposable = vscode.commands.registerCommand('devcross.start', () => { });
 	context.subscriptions.push(disposable);
 
 	vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));

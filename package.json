@@ -6,7 +6,7 @@
   "publisher": "cyenite",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.83.0"
   },
   "keywords": [
     "crossword",

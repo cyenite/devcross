@@ -56,7 +56,9 @@
     "commands": [
       {
         "command": "devcross.start",
-        "title": "Launch Devcross"
+        "title": "Launch Devcross",
+        "category": "Devcross",
+        "icon": "media/icon.png"
       }
     ]
   },

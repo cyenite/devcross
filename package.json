@@ -17,7 +17,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:devcross.start"
+  ],
   "browser": "./dist/web/extension.js",
   "repository": {
     "url": "https://github.com/cyenite/devcross",

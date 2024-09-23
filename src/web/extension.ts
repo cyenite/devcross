@@ -1,12 +1,10 @@
 import * as vscode from 'vscode';
 
 export async function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "devcross" is now active!');
 	const disposable = await vscode.commands.registerCommand('devcross.start', () => handleStartCommand(context));
-	console.log("Command registered...");
 	context.subscriptions.push(disposable);
 
-	// vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
+	vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
 }
 
 /**
@@ -15,18 +13,11 @@ export async function activate(context: vscode.ExtensionContext) {
  * @param context The extension context
  */
 async function handleStartCommand(context: vscode.ExtensionContext) {
-	console.log("Starting APIkey inquiry...");
 	let apiKey = await getApiKey(context);
-
-	console.log("API Inquiry complete...", apiKey);
 	if (!apiKey) return;
 
-
-	console.log("Creating webview panel...");
 	const panel = createWebviewPanel();
-	console.log("Webview panel created...");
 	panel.webview.html = generateWebviewContent(panel, context, apiKey);
-	console.log("Webview content generated...");
 }
 
 /**
@@ -37,8 +28,6 @@ async function handleStartCommand(context: vscode.ExtensionContext) {
  */
 async function getApiKey(context: vscode.ExtensionContext): Promise<string | null> {
 	let apiKey = context.globalState.get<string>('crosswordApiKey');
-
-	console.log("Getting API key: ", apiKey);
 
 	if (!apiKey) {
 		apiKey = await vscode.window.showInputBox({
@@ -56,8 +45,6 @@ async function getApiKey(context: vscode.ExtensionContext): Promise<string | nul
 		await context.globalState.update('crosswordApiKey', apiKey);
 		vscode.window.showInformationMessage('API key saved successfully.');
 	}
-
-	console.log("API key fetched: ", apiKey);
 
 	return apiKey;
 }

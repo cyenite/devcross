@@ -1,14 +1,7 @@
 import * as vscode from 'vscode';
 
-export function activate(context: vscode.ExtensionContext) {
-	const disposable = vscode.commands.registerCommand('devcross.start', async () => {
-		let apiKey = await getApiKey(context);
-		if (!apiKey) return;
-
-		const panel = createWebviewPanel();
-		panel.webview.html = generateWebviewContent(panel, context, apiKey);
-	});
-
+export async function activate(context: vscode.ExtensionContext) {
+	const disposable = await vscode.commands.registerCommand('devcross.start', () => handleStartCommand(context));
 	context.subscriptions.push(disposable);
 
 	vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
@@ -20,7 +13,11 @@ export function activate(context: vscode.ExtensionContext) {
  * @param context The extension context
  */
 async function handleStartCommand(context: vscode.ExtensionContext) {
+	let apiKey = await getApiKey(context);
+	if (!apiKey) return;
 
+	const panel = createWebviewPanel();
+	panel.webview.html = generateWebviewContent(panel, context, apiKey);
 }
 
 /**

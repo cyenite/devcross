@@ -2,7 +2,7 @@
   "name": "devcross",
   "displayName": "Devcross",
   "description": "A crossword for devs",
-  "version": "0.0.16",
+  "version": "0.0.4",
   "publisher": "cyenite",
   "license": "MIT",
   "engines": {
@@ -17,6 +17,7 @@
   "categories": [
     "Other"
   ],
+  "activationEvents": [],
   "browser": "./dist/web/extension.js",
   "repository": {
     "url": "https://github.com/cyenite/devcross",
@@ -34,10 +35,28 @@
   ],
   "icon": "media/icon.png",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devcrossSidebar",
+          "title": "Devcross",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "devcrossSidebar": [
+        {
+          "id": "devcrossView",
+          "name": "Crossword Puzzle",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "devcross.start",
-        "title": "Play Devcross"
+        "title": "Launch Devcross"
       }
     ]
   },

@@ -2,7 +2,7 @@
   "name": "devcross",
   "displayName": "Devcross",
   "description": "A crossword for devs",
-  "version": "0.0.6",
+  "version": "0.0.5",
   "publisher": "cyenite",
   "license": "MIT",
   "engines": {
@@ -17,9 +17,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:devcross.start"
-  ],
+  "activationEvents": [],
   "browser": "./dist/web/extension.js",
   "repository": {
     "url": "https://github.com/cyenite/devcross",

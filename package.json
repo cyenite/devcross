@@ -17,9 +17,6 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:devcross.play"
-  ],
   "browser": "./dist/web/extension.js",
   "repository": {
     "url": "https://github.com/cyenite/devcross",
@@ -39,7 +36,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "devcross.play",
+        "command": "devcross.start",
         "title": "Play Devcross"
       }
     ]

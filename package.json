@@ -2,7 +2,7 @@
   "name": "devcross",
   "displayName": "Devcross",
   "description": "A crossword for devs",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "publisher": "cyenite",
   "license": "MIT",
   "engines": {

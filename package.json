@@ -35,24 +35,6 @@
   ],
   "icon": "media/icon.png",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "devcrossSidebar",
-          "title": "Devcross",
-          "icon": "media/icon.png"
-        }
-      ]
-    },
-    "views": {
-      "devcrossSidebar": [
-        {
-          "id": "devcrossView",
-          "name": "Crossword Puzzle",
-          "type": "webview"
-        }
-      ]
-    },
     "commands": [
       {
         "command": "devcross.start",

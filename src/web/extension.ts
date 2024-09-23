@@ -6,7 +6,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	console.log("Command registered...");
 	context.subscriptions.push(disposable);
 
-	vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
+	// vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
 }
 
 /**

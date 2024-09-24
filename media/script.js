@@ -15,18 +15,18 @@ import { generateLayout } from './layout_generator.js';
 
 		// Start the crossword generation process
 		fetchCrosswordData()
-			.done(function (words_json) {
+			.done(function (response) {
 
 				$('#loader').hide();
 
-				var puzzleData = generateLayout(words_json, 15);
+				var puzzleData = generateLayout(response.data, 15);
 				var puzzleDataArray = extractPuzzleDataArray(puzzleData.result);
 
 				$('#puzzle-wrapper').crossword(puzzleDataArray);
 			})
 			.fail(function (error) {
 				$('#loader').hide();
-				handleError();
+				handleError(error);
 			});
 
 		/**
@@ -53,26 +53,39 @@ import { generateLayout } from './layout_generator.js';
 					try {
 						if (data.error) {
 							console.error('Error from AI API:', data.error);
-							deferred.reject(new Error(data.error.message));
+							deferred.reject({
+								error: new Error(data.error.message),
+								statusCode: jqXHR.status
+							});
 							return;
 						}
 
 						var aiResponseText = extractJsonFromApiResponse(data);
 						var words_json = JSON.parse(aiResponseText);
-						deferred.resolve(words_json);
+						deferred.resolve({
+							data: words_json,
+							statusCode: jqXHR.status
+						});
 					} catch (err) {
 						console.error('Error processing API response:', err);
-						deferred.reject(err);
+						deferred.reject({
+							error: err,
+							statusCode: jqXHR.status
+						});
 					}
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 					console.error('AJAX request failed:', textStatus, errorThrown);
-					deferred.reject(new Error(textStatus));
+					deferred.reject({
+						error: new Error(textStatus),
+						statusCode: jqXHR.status
+					});
 				}
 			});
 
 			return deferred.promise();
 		}
+
 
 		/**
 		 * Prepare the crossword prompt text for the API.
@@ -131,7 +144,13 @@ import { generateLayout } from './layout_generator.js';
 		/**
 		 * Handles errors by displaying a user-friendly message.
 		 */
-		function handleError() {
+		function handleError(error) {
+			if (error.statusCode === 403 || error.statusCode === 400) {
+				$('#puzzle-wrapper').html('<p>Error: Invalid API key. Please check the API key and try again.</p>');
+				$('#puzzle-wrapper').css('text-align', 'center', 'font-weight', 'bold', 'font-size', '20px');
+				return;
+			}
+
 			$('#puzzle-wrapper').html('<p>Error generating crossword puzzle. Please try again later.</p>');
 		}
 	});

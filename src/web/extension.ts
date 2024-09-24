@@ -29,7 +29,9 @@ async function handleStartCommand(context: vscode.ExtensionContext) {
 async function getApiKey(context: vscode.ExtensionContext): Promise<string | null> {
 	let apiKey = context.globalState.get<string>('crosswordApiKey');
 
-	if (!apiKey) {
+	const storedApiKeyValid = apiKey != null ? await verifyApiKey(apiKey) : false;
+
+	if (!storedApiKeyValid || !apiKey) {
 		apiKey = await vscode.window.showInputBox({
 			prompt: 'Enter your Gemini API Key for crossword generation',
 			placeHolder: 'API Key',
@@ -42,12 +44,46 @@ async function getApiKey(context: vscode.ExtensionContext): Promise<string | nul
 			return null;
 		}
 
+		const apiKeyValid = await verifyApiKey(apiKey);
+
+		if (!apiKeyValid) {
+			return null;
+		}
+
 		await context.globalState.update('crosswordApiKey', apiKey);
 		vscode.window.showInformationMessage('API key saved successfully.');
 	}
 
 	return apiKey;
 }
+
+
+/**
+ * Verifies the given API key.
+ * 
+ * @param apiKey The API key to verify
+ * @returns True if the API key is valid, false otherwise.
+ */
+async function verifyApiKey(apiKey: string): Promise<boolean> {
+	try {
+		const response = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`, {
+			method: 'GET',
+		});
+
+		if (response.status === 200) {
+			return true;
+		} else {
+			console.error('API Key verification failed with status:', response.status);
+			vscode.window.showErrorMessage('Invalid API key. Please enter a valid Gemini API key.');
+			return false;
+		}
+	} catch (error) {
+		console.error('Error verifying API key:', error);
+		vscode.window.showErrorMessage('An error occurred while verifying the API key.');
+		return false;
+	}
+}
+
 
 /**
  * Creates a new webview panel for the crossword puzzle.

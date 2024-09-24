@@ -2,7 +2,7 @@
   "name": "devcross",
   "displayName": "Devcross",
   "description": "A crossword for devs",
-  "version": "0.0.21",
+  "version": "0.0.5",
   "publisher": "cyenite",
   "license": "MIT",
   "engines": {
@@ -28,10 +28,6 @@
       "type": "buymeacoffee",
       "url": "https://buymeacoffee.com/cyenite"
     }
-  ],
-  "extensionKind": [
-    "ui",
-    "workspace"
   ],
   "icon": "media/icon.png",
   "contributes": {

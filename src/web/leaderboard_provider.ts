@@ -28,7 +28,7 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
     private _getHtmlForWebview(webview: vscode.Webview): string {
         const leaderboardData = JSON.stringify(this._getDummyLeaderboardData());
 
-        const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'style_leaderboard.css'));
+        const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/style', 'style_leaderboard.css'));
 
         return `
 			<!DOCTYPE html>

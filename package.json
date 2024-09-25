@@ -36,7 +36,7 @@
         {
           "id": "devcross",
           "title": "Devcross",
-          "icon": "media/icon_outlined.png"
+          "icon": "media/icons/icon_outlined.png"
         }
       ]
     },
@@ -54,7 +54,7 @@
         "command": "devcross.start",
         "title": "Launch Devcross",
         "category": "Devcross",
-        "icon": "media/icon.png"
+        "icon": "media/icons/icon.png"
       }
     ]
   },

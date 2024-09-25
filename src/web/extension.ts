@@ -164,14 +164,14 @@ class CrosswordViewProvider implements vscode.WebviewViewProvider {
  * @returns The HTML content as a string.
  */
 function generateWebviewContent(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, apiKey: string, githubUsername: string): string {
-	const getUri = (fileName: string) =>
-		panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', fileName));
+	const getUri = (fileName: string, isScript: boolean, isIcon: boolean, isStyle: boolean) =>
+		panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, isScript ? 'media/scripts' : isIcon ? 'media/icons' : 'media/style', fileName));
 
-	const crosswordScriptUri = getUri('jquery.crossword.js');
-	const customScriptUri = getUri('script.js');
-	const styleUri = getUri('style.css');
-	const jqueryUri = getUri('jquery-1.6.2.min.js');
-	const loaderUri = getUri('loading.gif');
+	const crosswordScriptUri = getUri('jquery.crossword.js', true, false, false);
+	const customScriptUri = getUri('script.js', true, false, false);
+	const styleUri = getUri('style.css', false, false, true);
+	const jqueryUri = getUri('jquery-1.6.2.min.js', true, false, false);
+	const loaderUri = getUri('loading.gif', false, true, false);
 
 	return `
 		<!DOCTYPE html>

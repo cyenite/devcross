@@ -15,8 +15,8 @@ table tr {
 }
 
 table td {
-    width: 5em;
-    height: 5em;
+    width: 5vw;
+    height: 5vw;
     border: 1px solid #cdcdcd;
     padding: 0;
     margin: 0;
@@ -33,6 +33,7 @@ td input {
     font-size: 3em;
     color: #666;
     background-color: #f4f4f4;
+    text-transform: uppercase;
 }
 
 td input:focus {
@@ -50,6 +51,7 @@ td span {
 input.done {
     font-weight: bold;
     color: green;
+    text-transform: uppercase;
 }
 
 .active,

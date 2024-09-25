@@ -2,8 +2,8 @@ import { generateLayout } from './layout_generator.js';
 
 (function ($) {
 	$(document).ready(function () {
-		// Get the API key from the data attribute of the body tag
 		const apiKey = document.body.dataset.apiKey;
+		const githubUsername = document.body.dataset.githubUsername;
 
 		if (!apiKey) {
 			console.error("API key is missing.");
@@ -22,7 +22,7 @@ import { generateLayout } from './layout_generator.js';
 				var puzzleData = generateLayout(response.data, 15);
 				var puzzleDataArray = extractPuzzleDataArray(puzzleData.result);
 
-				$('#puzzle-wrapper').crossword(puzzleDataArray);
+				$('#puzzle-wrapper').crossword(cleanArray(puzzleDataArray));
 			})
 			.fail(function (error) {
 				$('#loader').hide();
@@ -38,7 +38,7 @@ import { generateLayout } from './layout_generator.js';
 			var prompt = getCrosswordPrompt();
 
 			$.ajax({
-				url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+				url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro-latest:generateContent?key=${apiKey}`,
 				type: 'POST',
 				dataType: 'json',
 				contentType: 'application/json',
@@ -88,6 +88,20 @@ import { generateLayout } from './layout_generator.js';
 
 
 		/**
+		 * Clean the array of crossword entries by removing items with invalid coordinates.
+		 * @param {Array} arr - The array to clean. 
+		 * @returns {Array} - The cleaned array.
+		 */
+		function cleanArray(arr) {
+			return arr.filter(item => {
+				return !isNaN(item.position) &&
+					!isNaN(item.startx) &&
+					!isNaN(item.starty);
+			});
+		}
+
+
+		/**
 		 * Prepare the crossword prompt text for the API.
 		 * @returns {string} The prompt used to request crossword entries.
 		 */
@@ -108,6 +122,7 @@ import { generateLayout } from './layout_generator.js';
 				- Uniqueness: Each "answer" should be unique within the array.
 				- Content: The words should be appropriate for a general audience and free from offensive or sensitive content.
 				- Categories: Include a mix of categories to make the crossword diverse and interesting.
+				- Tone: Use a fun and punny tone for the clues to make the crossword engaging.
 				Please provide the completed array in valid JSON format, containing only the array of entries (starting with [ and ending with ]), without any variable declarations, additional text, or explanations.
             `;
 		}
@@ -146,12 +161,11 @@ import { generateLayout } from './layout_generator.js';
 		 */
 		function handleError(error) {
 			if (error.statusCode === 403 || error.statusCode === 400) {
-				$('#puzzle-wrapper').html('<p>Error: Invalid API key. Please check the API key and try again.</p>');
-				$('#puzzle-wrapper').css('text-align', 'center', 'font-weight', 'bold', 'font-size', '20px');
+				$('#puzzle-wrapper').html('<p>Error: Invalid API key. Please check the API key and try again.</p>').css('text-align', 'center', 'font-weight', 'bold', 'font-size', '20px');
 				return;
 			}
 
-			$('#puzzle-wrapper').html('<p>Error generating crossword puzzle. Please try again later.</p>');
+			$('#puzzle-wrapper').html('<p>Error generating crossword puzzle. Please try again later.</p>').css('text-align', 'center', 'font-weight', 'bold', 'font-size', '20px');
 		}
 	});
 })(jQuery);

@@ -4,13 +4,16 @@ body {
 
 #leaderboard {
     width: 100%;
+    margin-top: 20px;
 }
 
 .leaderboard-entry {
     display: flex;
     justify-content: space-between;
     padding: 10px;
+    margin: 8px 0;
     border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
 }
 
 .rank {
@@ -19,4 +22,54 @@ body {
 
 .username {
     flex: 1;
+}
+
+.score {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.current-user {
+    border: 2px solid #007acc;
+    border-radius: 8px;
+    animation: shimmer-border 3s ease-in-out infinite;
+}
+
+@keyframes shimmer-border {
+    0% {
+        border-color: #007acc;
+    }
+
+    33% {
+        border-color: #28a745;
+    }
+
+    66% {
+        border-color: #6f42c1;
+    }
+
+    100% {
+        border-color: #007acc;
+    }
+}
+
+#play-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    color: white;
+    background-color: #007acc;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#play-button:hover {
+    background-color: #005fa3;
+}
+
+#play-button:active {
+    background-color: #004c85;
 }

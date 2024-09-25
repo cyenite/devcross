@@ -65,7 +65,6 @@ async function getApiKey(context: vscode.ExtensionContext): Promise<string | nul
 	return apiKey;
 }
 
-
 /**
  * Verifies the given API key.
  * 
@@ -92,7 +91,6 @@ async function verifyApiKey(apiKey: string): Promise<boolean> {
 	}
 }
 
-
 /**
  * Authenticates with GitHub. The resultant session info can be used to populate and update the user's position in the leaderboard.
  * 
@@ -108,8 +106,6 @@ async function authenticateWithGitHub(): Promise<vscode.AuthenticationSession | 
 		return undefined;
 	}
 }
-
-
 
 /**
  * Creates a new webview panel for the crossword puzzle.

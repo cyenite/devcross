@@ -6,7 +6,7 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
 
     constructor(private readonly _extensionUri: vscode.Uri) { }
 
-    resolveWebviewView(
+    async resolveWebviewView(
         webviewView: vscode.WebviewView,
         _context: vscode.WebviewViewResolveContext,
         _token: vscode.CancellationToken
@@ -17,7 +17,14 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
             enableScripts: true,
         };
 
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        webviewView.webview.html = await this._getHtmlForWebview(webviewView.webview);
+
+        // Listen for messages from the webview
+        webviewView.webview.onDidReceiveMessage(async message => {
+            if (message.command === 'startGame') {
+                await vscode.commands.executeCommand('devcross.start');
+            }
+        });
     }
 
     /**
@@ -25,45 +32,69 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
      * @param webview - The webview to generate the HTML for.
      * @returns - The HTML content for the webview.
      */
-    private _getHtmlForWebview(webview: vscode.Webview): string {
-        const leaderboardData = JSON.stringify(this._getDummyLeaderboardData());
+    private async _getHtmlForWebview(webview: vscode.Webview): Promise<string> {
+        const authSession = await vscode.authentication.getSession('github', ['user:email']);
+        const githubUsername = authSession?.account.label || '--';
 
+        const leaderboardData = JSON.stringify(this._getDummyLeaderboardData());
         const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/style', 'style_leaderboard.css'));
 
         return `
-			<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Leaderboard</title>
-				<link href="${styleUri}" rel="stylesheet" />
-			</head>
-			<body>
-				<h2> Devcross Leaderboard</h2>
-				<div id="leaderboard"></div>
-				<script>
-					const leaderboardData = ${leaderboardData};
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Leaderboard</title>
+            <link href="${styleUri}" rel="stylesheet" />
+        </head>
+        <body>
+            <h2>Devcross Leaderboard</h2>
 
-					function populateLeaderboard() {
-						const leaderboardContainer = document.getElementById('leaderboard');
-						leaderboardContainer.innerHTML = '';
-						leaderboardData.forEach((entry, index) => {
-							const entryDiv = document.createElement('div');
-							entryDiv.className = 'leaderboard-entry';
-							entryDiv.innerHTML = \`
-								<span class="rank">\${index + 1}.</span>
-								<span class="username"> \${entry.username}</span>
-								<span class="score">\${entry.score} pts</span>
-							\`;
-							leaderboardContainer.appendChild(entryDiv);
-						});
-					}
+            <button id="play-button">🎮 Play Now</button>
 
-					populateLeaderboard();
-				</script>
-			</body>
-			</html>`;
+            <div id="leaderboard"></div>
+            
+            <script>
+                // Acquire the VS Code API for communication
+                const vscode = acquireVsCodeApi();
+
+                const leaderboardData = ${leaderboardData};
+                const githubUsername = "${githubUsername}";
+
+                // Function to populate leaderboard
+                function populateLeaderboard() {
+                    const leaderboardContainer = document.getElementById('leaderboard');
+                    leaderboardContainer.innerHTML = '';
+                    leaderboardData.forEach((entry, index) => {
+                        const entryDiv = document.createElement('div');
+                        entryDiv.className = 'leaderboard-entry';
+
+                        // Highlight the current user
+                        if (entry.username === githubUsername) {
+                            entryDiv.classList.add('current-user');
+                        }
+
+                        entryDiv.innerHTML = \`
+                            <span class="rank" > \${ index + 1 }.</span>
+                            <span class="username" > \${ entry.username } </span>
+                            <span class="score" > \${ entry.score } pts </span>
+                        \`;
+                        leaderboardContainer.appendChild(entryDiv);
+                    });
+                }
+
+
+                populateLeaderboard();
+
+                // Play button event listener
+                document.getElementById('play-button').addEventListener('click', () => {
+                    // Send a message to the VS Code extension
+                    vscode.postMessage({ command: 'startGame' });
+                });
+            </script>
+        </body>
+        </html>`;
     }
 
 
@@ -77,7 +108,36 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
             { username: 'MarkTk', score: 90 },
             { username: 'Sfogli', score: 80 },
             { username: 'Mwaura', score: 70 },
+            { username: 'Jane', score: 100 },
+            { username: 'MarkTk', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
+            { username: 'Jane', score: 100 },
+            { username: 'MarkTk', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
             { username: 'Rono', score: 60 },
+            { username: 'Jane', score: 100 },
+            { username: 'cyenite', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
+            { username: 'Jane', score: 100 },
+            { username: 'MarkTk', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
+            { username: 'Jane', score: 100 },
+            { username: 'MarkTk', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
+            { username: 'Jane', score: 100 },
+            { username: 'MarkTk', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
+            { username: 'Jane', score: 100 },
+            { username: 'MarkTk', score: 90 },
+            { username: 'Sfogli', score: 80 },
+            { username: 'Mwaura', score: 70 },
+
         ];
     }
 }

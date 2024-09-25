@@ -1,8 +1,14 @@
 import * as vscode from 'vscode';
+import { LeaderboardViewProvider } from './leaderboard_provider';
 
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('devcross.start', () => handleStartCommand(context));
 	context.subscriptions.push(disposable);
+
+	const leaderboardProvider = new LeaderboardViewProvider(context.extensionUri);
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(LeaderboardViewProvider.viewType, leaderboardProvider)
+	);
 }
 
 /**
@@ -75,10 +81,12 @@ async function verifyApiKey(apiKey: string): Promise<boolean> {
 		if (response.status === 200) {
 			return true;
 		} else {
+			console.error('API Key verification failed with status:', response.status);
 			vscode.window.showErrorMessage('Invalid API key. Please enter a valid Gemini API key.');
 			return false;
 		}
 	} catch (error) {
+		console.error('Error verifying API key:', error);
 		vscode.window.showErrorMessage('An error occurred while verifying the API key.');
 		return false;
 	}
@@ -118,6 +126,33 @@ function createWebviewPanel(): vscode.WebviewPanel {
 			retainContextWhenHidden: true
 		}
 	);
+}
+
+/**
+ * Provider for the sidebar webview.
+ */
+class CrosswordViewProvider implements vscode.WebviewViewProvider {
+	constructor(private readonly context: vscode.ExtensionContext) { }
+
+	async resolveWebviewView(webviewView: vscode.WebviewView) {
+		webviewView.webview.options = {
+			enableScripts: true,
+			localResourceRoots: [this.context.extensionUri]
+		};
+
+		const panel = createWebviewPanel();
+
+		const githubSession = await authenticateWithGitHub();
+		var githubUsername = githubSession?.account.label || '--';
+
+		let apiKey = await getApiKey(this.context);
+
+		if (!apiKey) {
+			return;
+		}
+
+		webviewView.webview.html = generateWebviewContent(panel, this.context, apiKey, githubUsername);
+	}
 }
 
 /**

@@ -34,17 +34,17 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "devcrossSidebar",
+          "id": "devcross",
           "title": "Devcross",
-          "icon": "media/icon.png"
+          "icon": "media/icon_outlined.png"
         }
       ]
     },
     "views": {
-      "devcrossSidebar": [
+      "devcross": [
         {
-          "id": "devcrossView",
-          "name": "Crossword Puzzle",
+          "id": "devcross.leaderboardView",
+          "name": "Leaderboard",
           "type": "webview"
         }
       ]

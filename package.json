@@ -29,7 +29,7 @@
       "url": "https://buymeacoffee.com/cyenite"
     }
   ],
-  "icon": "media/icon.png",
+  "icon": "media/icons/icon.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [

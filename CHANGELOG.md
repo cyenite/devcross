@@ -6,8 +6,8 @@ All notable changes to the "devcross" extension will be documented in this file.
 
 ### Added
 - Github Authentication
+- Quick launch from sidebar
 - Leaderboard UI
-- Scoring system
 
 ### Updated
 - AI model to Gemini 1.5 Pro Latest

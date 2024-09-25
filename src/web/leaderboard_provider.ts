@@ -34,9 +34,9 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
      */
     private async _getHtmlForWebview(webview: vscode.Webview): Promise<string> {
         const authSession = await vscode.authentication.getSession('github', ['user:email']);
-        const githubUsername = authSession?.account.label || '--';
+        const githubUsername = authSession?.account.label || 'Guest';
 
-        const leaderboardData = JSON.stringify(this._getDummyLeaderboardData());
+        const leaderboardData = JSON.stringify(this._getDummyLeaderboardData(githubUsername));
         const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/style', 'style_leaderboard.css'));
 
         return `
@@ -70,14 +70,16 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
                         const entryDiv = document.createElement('div');
                         entryDiv.className = 'leaderboard-entry';
 
-                        // Highlight the current user
+                        let displayUsername = entry.username;
+
                         if (entry.username === githubUsername) {
                             entryDiv.classList.add('current-user');
+                            displayUsername += ' (you)';
                         }
 
                         entryDiv.innerHTML = \`
-                            <span class="rank" > \${ index + 1 }.</span>
-                            <span class="username" > \${ entry.username } </span>
+                            <span class="rank" > \${ index + 1 }. </span>
+                            <span class="username" > \${ displayUsername } </span>
                             <span class="score" > \${ entry.score } pts </span>
                         \`;
                         leaderboardContainer.appendChild(entryDiv);
@@ -101,43 +103,12 @@ export class LeaderboardViewProvider implements vscode.WebviewViewProvider {
     /**
      * Generates dummy leaderboard data.
      */
-    private _getDummyLeaderboardData() {
+    private _getDummyLeaderboardData(loggedInUser: string): { username: string, score: number }[] {
         // TODO(Ron): Implement API to fetch real leaderboard data
         return [
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Rono', score: 60 },
-            { username: 'Jane', score: 100 },
-            { username: 'cyenite', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-            { username: 'Jane', score: 100 },
-            { username: 'MarkTk', score: 90 },
-            { username: 'Sfogli', score: 80 },
-            { username: 'Mwaura', score: 70 },
-
+            { username: 'AI', score: 100 },
+            { username: 'informix', score: 80 },
+            { username: loggedInUser, score: 0 },
         ];
     }
 }

@@ -3,8 +3,6 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('devcross.start', () => handleStartCommand(context));
 	context.subscriptions.push(disposable);
-
-	vscode.window.registerWebviewViewProvider('devcrossView', new CrosswordViewProvider(context));
 }
 
 /**
@@ -13,11 +11,15 @@ export function activate(context: vscode.ExtensionContext) {
  * @param context The extension context
  */
 async function handleStartCommand(context: vscode.ExtensionContext) {
+
+	const githubSession = await authenticateWithGitHub();
+	var githubUsername = githubSession?.account.label || '--';
+
 	let apiKey = await getApiKey(context);
 	if (!apiKey) return;
 
 	const panel = createWebviewPanel();
-	panel.webview.html = generateWebviewContent(panel, context, apiKey);
+	panel.webview.html = generateWebviewContent(panel, context, apiKey, githubUsername);
 }
 
 /**
@@ -73,16 +75,32 @@ async function verifyApiKey(apiKey: string): Promise<boolean> {
 		if (response.status === 200) {
 			return true;
 		} else {
-			console.error('API Key verification failed with status:', response.status);
 			vscode.window.showErrorMessage('Invalid API key. Please enter a valid Gemini API key.');
 			return false;
 		}
 	} catch (error) {
-		console.error('Error verifying API key:', error);
 		vscode.window.showErrorMessage('An error occurred while verifying the API key.');
 		return false;
 	}
 }
+
+
+/**
+ * Authenticates with GitHub. The resultant session info can be used to populate and update the user's position in the leaderboard.
+ * 
+ * @returns The authentication session, or undefined if authentication fails.
+ */
+async function authenticateWithGitHub(): Promise<vscode.AuthenticationSession | undefined> {
+	try {
+		const session = await vscode.authentication.getSession('github', ['user:email'], { createIfNone: true });
+		return session;
+	} catch (error) {
+		vscode.window.showErrorMessage('Authentication with GitHub failed.');
+		console.error('GitHub authentication error:', error);
+		return undefined;
+	}
+}
+
 
 
 /**
@@ -103,30 +121,6 @@ function createWebviewPanel(): vscode.WebviewPanel {
 }
 
 /**
- * Provider for the sidebar webview.
- */
-class CrosswordViewProvider implements vscode.WebviewViewProvider {
-	constructor(private readonly context: vscode.ExtensionContext) { }
-
-	async resolveWebviewView(webviewView: vscode.WebviewView) {
-		webviewView.webview.options = {
-			enableScripts: true,
-			localResourceRoots: [this.context.extensionUri]
-		};
-
-		const panel = createWebviewPanel();
-
-		let apiKey = await getApiKey(this.context);
-
-		if (!apiKey) {
-			return;
-		}
-
-		webviewView.webview.html = generateWebviewContent(panel, this.context, apiKey);
-	}
-}
-
-/**
  * Generates the HTML content for the crossword webview.
  * 
  * @param panel The webview panel
@@ -134,7 +128,7 @@ class CrosswordViewProvider implements vscode.WebviewViewProvider {
  * @param apiKey The stored API key
  * @returns The HTML content as a string.
  */
-function generateWebviewContent(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, apiKey: string): string {
+function generateWebviewContent(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, apiKey: string, githubUsername: string): string {
 	const getUri = (fileName: string) =>
 		panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', fileName));
 
@@ -161,7 +155,10 @@ function generateWebviewContent(panel: vscode.WebviewPanel, context: vscode.Exte
 				vscode-resource: https:;
 			">
 		</head>
-		<body data-api-key="${apiKey}">
+		<body data-api-key="${apiKey}" data-github-username="${githubUsername}">
+		 	<div id="user-info">
+                Logged in as: <strong>${githubUsername}</strong>
+            </div>
 			<div id="loader" style="display: none;">
 				<img src="${loaderUri}" alt="Loading..." />
 			</div>
